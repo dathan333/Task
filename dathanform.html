@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Registration Form</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to right, #74ebd5, #acb6e5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      form {
+        background-color: #ffffff;
+        padding: 30px 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        box-sizing: border-box;
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+      }
+      label {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 5px;
+        display: block;
+      }
+      .form-group {
+        margin-bottom: 3px;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="number"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        box-sizing: border-box;
+      }
+      input:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+        outline: none;
+      }
+      .password-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .show-password-label {
+        white-space: nowrap;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+      }
+      .gender-options {
+        display: flex;
+        justify-content: space-between;
+      }
+      .gender-options label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      input[type="submit"] {
+        width: 100%;
+        background-color: skyblue;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      input[type="submit"]:hover {
+        background-color: #3a78c2;
+      }
+      #error {
+        color: red;
+        font-size: 10px;
+        margin-top: 6px;
+        margin-bottom: 8px;
+      }
+      #success-message {
+        margin-top: 15px;
+        text-align: center;
+        font-weight: bold;
+        color: green;
+        display: none;
+      }
+      input[type="submit"]:disabled {
+        background-color: lightskyblue;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="form">
+      <h2>Register Here!</h2>
+      <table>
+        <tr>
+          <td>Name</td>
+          <td><input type="text" id="Name" name="name" required /></td>
+        </tr>
+        <tr>
+          <td>Email</td>
+          <td>
+            <div class="form-group">
+              <input type="email" id="email" name="email" required />
+              <div id="error"></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Password</td>
+          <td>
+            <div class="password-wrapper">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                minlength="8"
+              />
+              <label class="show-password-label">
+                <input type="checkbox" id="showPassword" /> Show Password
+              </label>
+            </div>
+            <div id="password-error" style="color: red; font-size: 10px"></div>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Age</td>
+          <td>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              min="18"
+              max="100"
+              required
+            />
+            <div id="age-error" style="color: red; font-size: 10px"></div>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Gender</td>
+          <td colspan="2" class="gender-options">
+            <label>
+              <input type="radio" name="gender" value="Male" required /> Male
+            </label>
+            <label
+              ><input type="radio" name="gender" value="Female" required />
+              Female
+            </label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <label>
+              <input type="checkbox" id="terms" required />
+              I agree to the Terms and Conditions
+            </label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" class="submit-row">
+            <input type="submit" value="Register" id="submitBtn" disabled />
+
+            <div
+              id="success-message"
+              style="display: none; color: rgb(8, 8, 8); text-align: center"
+            >
+              Registration Succesful!
+            </div>
+            <div
+              id="loading-indicator"
+              style="display: none; text-align: center; margin-top: 10px"
+            >
+              <span>Loading...</span>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </form>
+    <script>
+      const email = document.getElementById("email");
+      const password = document.getElementById("password");
+      const showPassword = document.getElementById("showPassword");
+      const error = document.getElementById("error");
+      const form = document.getElementById("form");
+      const nameInput = document.getElementById("Name");
+      const ageInput = document.getElementById("age");
+      const genderInputs = document.querySelectorAll('input[name="gender"]');
+      const termsCheckbox = document.getElementById("terms");
+      const submitBtn = document.getElementById("submitBtn");
+
+      const passwordError = document.getElementById("password-error");
+      const ageError = document.getElementById("age-error");
+
+      let passwordTouched = false;
+      let ageTouched = false;
+      let formSubmitted = false;
+
+      password.addEventListener("input", () => {
+        passwordTouched = true;
+        validateForm();
+      });
+
+      ageInput.addEventListener("input", () => {
+        ageTouched = true;
+        validateForm();
+      });
+
+      document.addEventListener("click", function () {
+        if (passwordTouched) {
+          if (password.value.length < 8) {
+            passwordError.textContent =
+              "Password must be at least 8 characters long.";
+          } else {
+            passwordError.textContent = "";
+          }
+        }
+
+        if (ageTouched) {
+          const ageValue = parseInt(ageInput.value);
+          if (
+            isNaN(ageValue) ||
+            ageInput.value.trim() === "" ||
+            ageValue < 18 ||
+            ageValue > 100
+          ) {
+            ageError.textContent = "Age must be between 18 and 100.";
+          } else {
+            ageError.textContent = "";
+          }
+        }
+      });
+
+      function validateForm() {
+        const isNameValid = nameInput.value.trim() !== "";
+        const isEmailValid = email.value.includes("@");
+        const isPasswordValid = password.value.length >= 8;
+        const isAgeValid = ageInput.value >= 18 && ageInput.value <= 100;
+        const isGenderValid = Array.from(genderInputs).some(
+          (input) => input.checked
+        );
+        const isTermsChecked = termsCheckbox.checked;
+
+        if (!isEmailValid && email === document.activeElement) {
+          error.innerHTML = "Email is invalid";
+        } else {
+          error.innerHTML = "";
+        }
+
+        submitBtn.disabled = !(
+          isNameValid &&
+          isEmailValid &&
+          isPasswordValid &&
+          isAgeValid &&
+          isGenderValid &&
+          isTermsChecked
+        );
+      }
+
+      email.onblur = function () {
+        if (!email.value.includes("@")) {
+          email.classList.add("invalid");
+          error.innerHTML = "Email is invalid";
+        }
+      };
+      email.onfocus = function () {
+        email.classList.remove("invalid");
+        error.innerHTML = "";
+      };
+
+      showPassword.addEventListener("change", function () {
+        password.type = this.checked ? "text" : "password";
+      });
+
+      form.addEventListener("input", validateForm);
+      form.addEventListener("change", validateForm);
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        document.getElementById("loading-indicator").style.display = "block";
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+        const formObject = {};
+        formData.forEach((value, key) => {
+          formObject[key] = value;
+        });
+        alert(JSON.stringify(formObject, 0, 2));
+
+        try {
+          const response = await fetch(
+            "https://jsonplaceholder.typicode.com/posts",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json;charset=utf-8",
+              },
+              body: JSON.stringify(formObject),
+            }
+          );
+          const res = await response.json();
+          alert("Response received: " + JSON.stringify(res));
+          document.getElementById("success-message").style.display = "block";
+          formSubmitted = true;
+          form.reset();
+          passwordTouched = false;
+          ageTouched = false;
+          validateForm();
+        } catch (err) {
+          alert("Error: " + err);
+        } finally {
+          document.getElementById("loading-indicator").style.display = "none";
+        }
+      });
+
+      validateForm();
+
+      form.addEventListener("click", () => {
+        if (formSubmitted) {
+          document.getElementById("success-message").style.display = "none";
+          formSubmitted = false;
+        }
+      });
+
+      form.addEventListener("focusin", () => {
+        if (formSubmitted) {
+          document.getElementById("success-message").style.display = "none";
+          formSubmitted = false;
+        }
+      });
+    </script>
+  </body>
+</html>

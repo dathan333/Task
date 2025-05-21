@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <script>
+      let product = [
+        { id: 1, name: "Apple", category: "Fruit", price: 200, stock: 1050 },
+        { id: 2, name: "Orange", category: "Fruit", price: 150, stock: 2000 },
+        { id: 3, name: "Carrot", category: "Vegetable", price: 50, stock: 750 },
+        {
+          id: 4,
+          name: "Cucumber",
+          category: "Vegetable",
+          price: 200,
+          stock: 1050,
+        },
+        { id: 5, name: "Grape", category: "Fruit", price: 110, stock: 1200 },
+      ];
+
+      function addProduct(newproduct) {
+        for (let i = 0; i < product.length; i++) {
+          if (product[i].id === newproduct.id) {
+            alert("Product with this ID already exists.");
+            return;
+          }
+        }
+        product.push(newproduct);
+        alert("Product added:\n" + JSON.stringify(product));
+      }
+
+      function updateStock(id, newStock) {
+        for (let i = 0; i < product.length; i++) {
+          if (product[i].id === id) {
+            product[i].stock = newStock;
+            alert("Stock updated:\n" + JSON.stringify(product));
+            return;
+          }
+        }
+        alert("Product not found.");
+      }
+
+      function deleteProduct(id) {
+        for (let i = 0; i < product.length; i++) {
+          if (product[i].id === id) {
+            product.splice(i, 1);
+            alert("Product deleted:\n" + JSON.stringify(product));
+            return;
+          }
+        }
+        alert("Product not found.");
+      }
+
+      function filterByCategory(category) {
+        let productCategory = [];
+        for (let i = 0; i < product.length; i++) {
+          if (product[i].category.toLowerCase() === category.toLowerCase()) {
+            productCategory.push(product[i]);
+          }
+        }
+        alert("Filtered by category:\n" + JSON.stringify(productCategory));
+      }
+
+      function calculateInventoryValue() {
+        let total = 0;
+        for (let i = 0; i < product.length; i++) {
+          total += product[i].price * product[i].stock;
+        }
+        alert("Total Inventory Value: " + total);
+      }
+
+      function searchProduct(keyword) {
+        let result = [];
+        let lkeyword = keyword.toLowerCase();
+        for (let i = 0; i < product.length; i++) {
+          if (product[i].name.toLowerCase().includes(lkeyword)) {
+            result.push(product[i]);
+          }
+        }
+        alert("Search results:\n" + JSON.stringify(result));
+      }
+
+      function sortByPrice() {
+        let sortedProducts = [...product];
+        sortedProducts.sort((a, b) => a.price - b.price);
+        alert("Sorted by Price:\n" + JSON.stringify(sortedProducts));
+      }
+
+      function main() {
+        let action = prompt(
+          "Choose an action:\n" +
+            "1: Add Product\n" +
+            "2: Update Stock\n" +
+            "3: Delete Product\n" +
+            "4: Filter by Category\n" +
+            "5: Calculate Inventory Value\n" +
+            "6: Search Product\n" +
+            "7: Sort by Price\n" +
+            "8: Show Inventory\n" +
+            "9: Exit"
+        );
+
+        switch (action) {
+          case "1":
+            let newProduct = {
+              id: parseInt(prompt("Enter ID:")),
+              name: prompt("Enter Name:"),
+              category: prompt("Enter Category:"),
+              price: parseFloat(prompt("Enter Price:")),
+              stock: parseInt(prompt("Enter Stock:")),
+            };
+            addProduct(newProduct);
+            break;
+
+          case "2":
+            let updateId = parseInt(prompt("Enter product ID to update:"));
+            let newStock = parseInt(prompt("Enter new stock value:"));
+            updateStock(updateId, newStock);
+            break;
+
+          case "3":
+            let deleteId = parseInt(prompt("Enter product ID to delete:"));
+            deleteProduct(deleteId);
+            break;
+
+          case "4":
+            let category = prompt("Enter category to filter:");
+            filterByCategory(category);
+            break;
+
+          case "5":
+            calculateInventoryValue();
+            break;
+
+          case "6":
+            let keyword = prompt("Enter keyword to search:");
+            searchProduct(keyword);
+            break;
+
+          case "7":
+            sortByPrice();
+            break;
+
+          case "8":
+            alert(JSON.stringify(product));
+            break;
+
+          case "9":
+            alert("Exit");
+            return;
+
+          default:
+            alert("Invalid choice.");
+        }
+
+        main();
+      }
+
+      main();
+    </script>
+  </body>
+</html>
